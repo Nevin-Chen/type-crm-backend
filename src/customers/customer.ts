@@ -1,9 +1,9 @@
+import { ObjectId } from "mongodb";
+
 export interface Customer {
-  id: number | UUID,
+  _id: ObjectId,
   name: string,
   email: string,
   phoneNumber: string;
   address: string
 }
-
-export type UUID = string;
