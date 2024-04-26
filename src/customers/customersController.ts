@@ -8,9 +8,17 @@ export class CustomerController extends Controller {
 	public async getAllCustomers(
 		@Res() notFoundResponse: TsoaResponse<404, { reason: string }>
 	): Promise<Customer[] > {
-		const customers = await new CustomersService().getAll();
-		if (!customers) return notFoundResponse(404, { reason: "The customer _id does not exist" });
-		return customers;
+		try {
+			const customers = await new CustomersService().getAll();
+
+			if (!customers) {
+				return notFoundResponse(404, { reason: "Customers do not exist" });
+			}
+
+			return customers;
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	@Get("{customerId}")
@@ -18,8 +26,16 @@ export class CustomerController extends Controller {
 		@Path() customerId: string,
 		@Res() notFoundResponse: TsoaResponse<404, { reason: string }>
 	): Promise<Customer> {
-		const customer = await new CustomersService().get(customerId);
-		if (!customer) return notFoundResponse(404, { reason: "The customer _id does not exist" });
-		return customer;
+		try {
+			const customer = await new CustomersService().get(customerId);
+
+			if (!customer) {
+				return notFoundResponse(404, { reason: "The customer _id does not exist" });
+			}
+
+			return customer;
+		} catch (error) {
+			throw error;
+		}
 	}
 }
