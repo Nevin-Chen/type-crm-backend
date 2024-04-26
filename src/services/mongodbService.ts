@@ -1,23 +1,22 @@
-// External Dependencies
-import * as mongoDB from "mongodb";
-import * as dotenv from "dotenv";
+import { MongoClient, Db, Collection } from "mongodb";
+import { config } from "dotenv";
 
-// Global Variables
-export const collections: { customers?: mongoDB.Collection } = {}
+export const collections: { customers?: Collection } = {}
 
-// Initialize Connection
-export async function connectToDatabase () {
-  dotenv.config();
+export async function connectToDatabase() {
+  try {
+    config();
 
-  const client: mongoDB.MongoClient = new mongoDB.MongoClient(process.env.MONGO_URI as string);
+    const client: MongoClient = new MongoClient(process.env.MONGO_URI as string);
+    await client.connect();
+    const db: Db = client.db(process.env.DB_NAME);
 
-  await client.connect();
+    const customersCollection: Collection = db.collection(process.env.CUSTOMERS_COLLECTION_NAME as string);
+    collections.customers = customersCollection;
 
-  const db: mongoDB.Db = client.db(process.env.DB_NAME);
-
-  const customersCollection: mongoDB.Collection = db.collection(process.env.CUSTOMERS_COLLECTION_NAME as string);
-
-  collections.customers = customersCollection;
-
-  console.log(`Successfully connected to database: ${db.databaseName} and collection: ${customersCollection.collectionName}`);
+    console.log(`Successfully connected to database: ${db.databaseName}`);
+  } catch (error) {
+    console.error("Database connection failed", error);
+    throw error;
+  }
 }
