@@ -1,13 +1,13 @@
-import { Controller, Get, Path, Route, Res, TsoaResponse } from "tsoa";
-import { Customer } from "./customer";
-import { CustomersService } from "./customersService";
+import { Controller, Get, Post, Patch, Delete, Path, Route, Res, TsoaResponse, Body } from "tsoa";
+import { Customer, CustomerCreateParams, CustomerUpdateParams } from "./customer";
+import { CustomersService  } from "./customersService";
 
 @Route("customers")
 export class CustomerController extends Controller {
 	@Get("/")
 	public async getAllCustomers(
 		@Res() notFoundResponse: TsoaResponse<404, { reason: string }>
-	): Promise<Customer[] > {
+	): Promise<Customer[]> {
 		try {
 			const customers = await new CustomersService().getAll();
 
@@ -34,6 +34,42 @@ export class CustomerController extends Controller {
 			}
 
 			return customer;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	@Post()
+	public async createCustomer(
+		@Body() requestBody: CustomerCreateParams
+	): Promise<Customer> {
+		try {
+			const customer = await new CustomersService().create(requestBody);
+			return customer;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	@Patch("{customerId}")
+	public async updateCustomer(
+		@Path() customerId: string,
+		@Body() updateParams: CustomerUpdateParams
+	): Promise<boolean> {
+		try {
+			const customer = await new CustomersService().update(customerId, updateParams);
+			return customer;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	@Delete("{customerId}")
+	public async deleteCustomer(
+		@Path() customerId: string
+	): Promise<void> {
+		try {
+			return await new CustomersService().delete(customerId);
 		} catch (error) {
 			throw error;
 		}
