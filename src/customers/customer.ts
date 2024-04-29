@@ -8,5 +8,11 @@ export interface Customer {
   address: string
 }
 
-export type CustomerCreateParams = Partial<Customer>;
+export interface CustomerCreateParams {
+  name: string;
+  email?: string;
+  phoneNumber?: string;
+  address?: string;
+}
+
 export type CustomerUpdateParams = Partial<Customer>;
